@@ -1,0 +1,31 @@
+---
+# tasks file for installing nginx on centos7
+
+- name: copy nginx yum repo
+  copy: src=etc/yum.repos.d/nginx.repo dest=/etc/yum.repos.d/nginx.repo
+
+- name: install nginx releated package
+  yum: name={{ item }} state=present enablerepo=nginx
+  with_items:
+    - nginx
+
+
+#- name: template /etc/nginx/conf/nginx.conf
+#  template: src=etc/nginx/conf/nginx.conf.j2 dest=/etc/nginx/conf/nginx.conf mode=644 backup=yes
+#  notify: reload nginx
+
+#- name: check if /etc/nginx/conf.d/ssl.conf existed
+#  stat: path=/etc/nginx/conf.d/ssl.conf
+#  register: file_existed
+#
+#- name: delete and backup ssl config file if change ssl from configured to not configured
+#  command: mv /etc/nginx/conf.d/ssl.conf /etc/nginx/conf.d/ssl.conf.{{ ansible_date_time.iso8601_micro }}
+#  when: file_existed.stat.exists == true and config_ssl is defined and config_ssl == false
+#  notify: restart nginx
+#
+#- name: install nginx on CentOS
+#  include: ssl.yml
+#  when: config_ssl is defined and config_ssl == true
+
+- name: start and enable nginx
+  service: name=nginx state=started enabled=yes
